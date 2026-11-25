@@ -1,0 +1,133 @@
+{
+ "split": "validation (The Well active_matter, official 'valid' split; 24 trajectories x 74 windows = 1,776)",
+ "selection_algorithm": "deterministic, no randomness: label each of the 24 validation trajectories by its (alpha, zeta); sort trajectories by alpha then zeta (numpy.lexsort); take sorted positions round(linspace(0, 23, 12)); use the middle window (offset 37 of 74) of each",
+ "random_seed": null,
+ "stratification_note": "spans alpha in [-5, -1] and zeta in [1, 17]; an illustration, not a statistically representative sample",
+ "source_data": "The Well active_matter (polymathic-ai), HDF5 'valid' split as downloaded for the project; 81 frames per trajectory",
+ "preprocessing": "context window = 4 consecutive frames x 11 channels at 224x224, produced by the project's WellDatasetForJEPA loader with stride 1, input noise 0",
+ "quantization": "per channel uint8: q = round((x - lo) / scale), scale = (max - min) / 255; x_hat = lo + q * scale",
+ "export_code": "scripts/export_demo.py (private repository, commit fb1b6b3)",
+ "n_validation_trajectories": 24,
+ "clips": [
+  {
+   "clip": 0,
+   "file": "clip_00.u8",
+   "sha256": "a630b0e5deba6c7c01f0f405529e8e6c8efff9601c074ee9bdbbb532297e5320",
+   "trajectory_id": 12,
+   "window_index_in_validation": 925,
+   "window_offset_in_trajectory": 37,
+   "alpha": -5.0,
+   "zeta": 15.0
+  },
+  {
+   "clip": 1,
+   "file": "clip_01.u8",
+   "sha256": "840d642ee020ed5715884799fa6c394a0fe56a7c869bace1284a99aba65c2ec5",
+   "trajectory_id": 2,
+   "window_index_in_validation": 185,
+   "window_offset_in_trajectory": 37,
+   "alpha": -4.0,
+   "zeta": 1.0
+  },
+  {
+   "clip": 2,
+   "file": "clip_02.u8",
+   "sha256": "50a5365559a6e770fa306f015de58163b2608baca17c85fc6699b012ecd81199",
+   "trajectory_id": 4,
+   "window_index_in_validation": 333,
+   "window_offset_in_trajectory": 37,
+   "alpha": -4.0,
+   "zeta": 11.0
+  },
+  {
+   "clip": 3,
+   "file": "clip_03.u8",
+   "sha256": "7b49c31c2deafd23d027da764c53ae8ca7cc759bd8b6d8a4a77705058f484d33",
+   "trajectory_id": 6,
+   "window_index_in_validation": 481,
+   "window_offset_in_trajectory": 37,
+   "alpha": -4.0,
+   "zeta": 11.0
+  },
+  {
+   "clip": 4,
+   "file": "clip_04.u8",
+   "sha256": "f096e1c53b2ac545453865be01b14d21adb6e7f94bc578e341abd72b7231fe16",
+   "trajectory_id": 14,
+   "window_index_in_validation": 1073,
+   "window_offset_in_trajectory": 37,
+   "alpha": -4.0,
+   "zeta": 17.0
+  },
+  {
+   "clip": 5,
+   "file": "clip_05.u8",
+   "sha256": "e0324c5ce43aec2047f7418b7ce19e1eb276d5c1e8dc5eb120b6b7be99371f73",
+   "trajectory_id": 1,
+   "window_index_in_validation": 111,
+   "window_offset_in_trajectory": 37,
+   "alpha": -3.0,
+   "zeta": 1.0
+  },
+  {
+   "clip": 6,
+   "file": "clip_06.u8",
+   "sha256": "3d5220a07b294e7f37a209ba4306fe05c24856f640ae0641d9085158c6a39454",
+   "trajectory_id": 8,
+   "window_index_in_validation": 629,
+   "window_offset_in_trajectory": 37,
+   "alpha": -3.0,
+   "zeta": 13.0
+  },
+  {
+   "clip": 7,
+   "file": "clip_07.u8",
+   "sha256": "139cacc024a3d8c77a1ec77e17b0f6e5ff5fc8b3f46ac4879995b63c23ebb3f8",
+   "trajectory_id": 15,
+   "window_index_in_validation": 1147,
+   "window_offset_in_trajectory": 37,
+   "alpha": -2.0,
+   "zeta": 3.0
+  },
+  {
+   "clip": 8,
+   "file": "clip_08.u8",
+   "sha256": "418ab104c994bf9f2a4977fc88877cf7eff67e09d5714c3af0f97a8a2620231d",
+   "trajectory_id": 3,
+   "window_index_in_validation": 259,
+   "window_offset_in_trajectory": 37,
+   "alpha": -2.0,
+   "zeta": 11.0
+  },
+  {
+   "clip": 9,
+   "file": "clip_09.u8",
+   "sha256": "e9ffc6e0bf6dc29fc13cc3d9717be38999c9a5059bf1b5b86bef8450ee7cd6f9",
+   "trajectory_id": 16,
+   "window_index_in_validation": 1221,
+   "window_offset_in_trajectory": 37,
+   "alpha": -1.0,
+   "zeta": 5.0
+  },
+  {
+   "clip": 10,
+   "file": "clip_10.u8",
+   "sha256": "1f67a53296cc80faeef2da542cf2c25159a43c99d04da82e6e4778a03d17bfe3",
+   "trajectory_id": 22,
+   "window_index_in_validation": 1665,
+   "window_offset_in_trajectory": 37,
+   "alpha": -1.0,
+   "zeta": 9.0
+  },
+  {
+   "clip": 11,
+   "file": "clip_11.u8",
+   "sha256": "9814bf14e873f71caec2660e6004eb4e2c988aa5a594aefe03ae8c7b8ac91ff9",
+   "trajectory_id": 10,
+   "window_index_in_validation": 777,
+   "window_offset_in_trajectory": 37,
+   "alpha": -1.0,
+   "zeta": 15.0
+  }
+ ]
+}

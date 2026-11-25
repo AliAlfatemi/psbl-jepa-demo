@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="referrer" content="no-referrer">
+  <title>PSBL-JEPA Demo</title>
+  <meta name="description" content="Frozen JEPA encoders on The Well active_matter validation clips: when non-collapse is not enough.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+  <script src="config.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="hero">
+  <div class="wrap">
+    <p class="eyebrow">Deep Learning · NYU · Fall 2026</p>
+    <h1>When Non-Collapse Is Not Enough</h1>
+    <p class="lede" id="lede"></p>
+    <p class="authors">Ali Alfatemi<sup>*</sup> · Yuanhong Wu<sup>*</sup> · Nikoloz Khmaladze<sup>*</sup>
+      <span class="muted">· *equal contribution</span></p>
+    <div class="pills">
+      <span class="pill" id="pill-runtime">Loading…</span>
+      <span class="pill">2.86 M parameters</span>
+      <span class="pill">validation data only</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap" id="main">
+  <div class="notice" id="mode-notice" hidden></div>
+  <noscript><p class="notice">This demo needs JavaScript. The results table below in the paper summarises the findings.</p></noscript>
+
+  <!-- ===================================================== LIVE DEMO -->
+  <section id="live" aria-labelledby="live-title">
+    <h2 id="live-title">1 · Run the encoder</h2>
+    <p class="section-lede" id="live-lede"></p>
+    <p class="badge" id="badge">Live demo: validation clips · epoch 30 · seed 0</p>
+
+    <div class="live-grid">
+      <div class="panel">
+        <div class="panel-head">
+          <h3 id="clip-heading">Choose a clip</h3>
+          <label class="small check"><input type="checkbox" id="reveal"> Reveal labels before running</label>
+        </div>
+        <div class="clip-grid" id="clip-grid" role="group" aria-labelledby="clip-heading"></div>
+        <p class="small muted" id="clip-note">Labels stay hidden until a prediction has been made for that clip.</p>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h3>Input frames <span class="muted small" id="frames-clip"></span></h3>
+          <label class="small">Channel <select id="channel-select"></select></label>
+        </div>
+        <div class="frames" id="frames"></div>
+        <div class="colorbar" id="colorbar" aria-live="off"></div>
+        <div class="controls">
+          <div class="seg" role="group" aria-label="Encoders to run">
+            <button type="button" class="seg-btn" data-model="both" aria-pressed="true">Both</button>
+            <button type="button" class="seg-btn" data-model="psbl" aria-pressed="false">PSBL</button>
+            <button type="button" class="seg-btn" data-model="vicreg" aria-pressed="false">VICReg</button>
+          </div>
+          <label class="small check"><input type="checkbox" id="knn-toggle"> Include kNN read-out <span class="muted" id="knn-size">(+3.3 MB per encoder)</span></label>
+          <div class="run-row">
+            <button type="button" class="run" id="run-btn" disabled>Run encoder</button>
+            <button type="button" class="cancel" id="cancel-btn" hidden>Cancel</button>
+          </div>
+        </div>
+        <p class="small muted status" id="status" role="status" aria-live="polite">Loading…</p>
+      </div>
+    </div>
+
+    <p class="small muted units-note">Live values and absolute errors are shown in raw physical-parameter units. The
+      paper's reported metric is MSE on training-z-scored labels. Twelve clips cannot estimate aggregate
+      performance; see section 3 for that.</p>
+    <div class="results-grid" id="results" aria-live="polite"></div>
+
+    <div class="panel map-panel">
+      <div class="panel-head">
+        <h3 id="map-title">Where the clip lands in embedding space</h3>
+        <div class="legend-inline small">
+          <span><i class="dot-ring" aria-hidden="true"></i>this clip</span>
+          <span><i class="dot-traj" aria-hidden="true"></i>same trajectory</span>
+        </div>
+      </div>
+      <p class="small muted">First two principal components (PC1, PC2) of each encoder's standardized validation
+        embeddings, coloured by the true value. Hover or tap a point to inspect it; the table below lists the same
+        information for keyboard and screen-reader users.</p>
+      <div class="map-controls">
+        <div class="seg" role="group" aria-label="Colour points by">
+          <button type="button" class="seg-btn color-btn" data-color="alpha" aria-pressed="true">Colour by α</button>
+          <button type="button" class="seg-btn color-btn" data-color="zeta" aria-pressed="false">Colour by ζ</button>
+        </div>
+        <div class="ramp-legend" id="ramp-legend"></div>
+      </div>
+      <div class="maps">
+        <figure class="map" data-model="vicreg"><figcaption><span class="swatch s-vicreg" aria-hidden="true"></span>VICReg <span class="muted small" data-ev="vicreg"></span></figcaption>
+          <canvas role="img" aria-label="VICReg validation embedding map"></canvas><p class="small muted map-summary" data-summary="vicreg"></p></figure>
+        <figure class="map" data-model="psbl"><figcaption><span class="swatch s-psbl" aria-hidden="true"></span>PSBL (ours) <span class="muted small" data-ev="psbl"></span></figcaption>
+          <canvas role="img" aria-label="PSBL validation embedding map"></canvas><p class="small muted map-summary" data-summary="psbl"></p></figure>
+      </div>
+      <details class="data-table"><summary>Show map data as a table (trajectory centroids)</summary><div id="map-table"></div></details>
+      <div class="tooltip" id="tooltip" hidden></div>
+    </div>
+  </section>
+
+  <!-- ===================================================== DYNAMICS -->
+  <section id="dynamics" aria-labelledby="dyn-title">
+    <h2 id="dyn-title">2 · Non-collapse is not one number</h2>
+    <p class="section-lede">Validation diagnostics during the 30-epoch runs (line: mean of 3 seeds; band: min–max).
+      VICReg keeps a larger scale but its effective rank falls steadily; PSBL settles at a lower, stable rank while
+      its embedding distances align with a fixed, cross-fitted estimate of the predicted future.</p>
+    <div class="legend small"><span><span class="swatch s-vicreg" aria-hidden="true"></span>VICReg</span><span><span class="swatch s-psbl" aria-hidden="true"></span>PSBL</span></div>
+    <div class="charts" id="charts"></div>
+  </section>
+
+  <!-- ===================================================== RESULTS -->
+  <section id="results-section" aria-labelledby="res-title">
+    <h2 id="res-title">3 · What the probes say</h2>
+    <p class="section-lede">Frozen-encoder MSE on training-z-scored (α, ζ), mean ± std over 3 seeds; lower is better.
+      Predicting the training mean scores <span id="pm"></span> on validation. The test split was evaluated once, on the
+      epoch-30 checkpoints.</p>
+    <p class="note">The live examples above are validation illustrations from one checkpoint. The table summarizes
+      offline three-seed results and is not computed from the 12 displayed clips.</p>
+    <div class="table-wrap" tabindex="0" role="region" aria-label="Results table"><table id="res-table"><caption class="sr-only">Frozen-encoder MSE by split, epoch and encoder</caption></table></div>
+    <div class="callouts">
+      <div class="callout"><h3>Held-out test</h3><p id="ci-text"></p></div>
+      <div class="callout"><h3>Stability vs. best checkpoint</h3>
+        <p>PSBL is more stable over the fixed 30-epoch schedule and varies less across seeds. VICReg reaches the
+          stronger early validation checkpoint (epoch 8), stays stronger under validation-selected kNN, and degrades as
+          its effective rank falls.</p></div>
+      <div class="callout"><h3>A fixed baseline (validation only)</h3>
+        <p>On validation, a non-learned DCT descriptor outperforms every learned representation evaluated here. It was
+          never evaluated on test. Numerical non-collapse, effective rank, nuisance rejection and useful neighbourhoods
+          are different properties.</p></div>
+    </div>
+  </section>
+
+  <section id="method" aria-labelledby="method-title">
+    <h2 id="method-title">4 · How it works</h2>
+    <p>A JEPA can minimise its prediction loss with a constant encoder, so it needs an anti-collapse term.
+      <strong>PSBL</strong> (Predictive-Sufficient Bi-Lipschitz) asks pairwise embedding distances to stay inside a
+      band around a reference distance: a cross-fitted ridge estimate of how different two samples' <em>predicted
+      futures</em> are, computed once from raw training data without labels. The lower edge penalizes pairwise
+      collapse whenever the fixed reference separates the samples; the upper edge penalizes variation not supported by
+      the fixed predictive reference. In our controlled benchmark this recovered the true factors while ignoring
+      nuisance; on <code>active_matter</code> it trains stably but does not clearly separate from VICReg on the
+      held-out test split. The subspace criteria PGRF and NPMR were rejected diagnostic candidates, and empirical
+      SIGReg statements in the paper apply only to the repository SIGReg implementation.</p>
+    <p id="how-demo"></p>
+  </section>
+
+  <section id="attribution" aria-labelledby="attr-title">
+    <h2 id="attr-title">Data, attribution and release status</h2>
+    <ul class="small">
+      <li><strong>Data:</strong> The Well, <code>active_matter</code> (Ohana et al., 2024; Polymathic AI),
+        <a href="https://huggingface.co/datasets/polymathic-ai/active_matter">dataset card</a>, licensed
+        <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Modifications: cropped/processed into
+        context windows and quantized to 8 bits per channel for browser delivery. Validation split only.</li>
+      <li><strong>Baseline JEPA:</strong> Qu et al. (2026), <em>Representation Learning for Spatiotemporal Physical Systems</em>.</li>
+      <li><strong>Release status:</strong> course project, under evaluation. No license is granted for the project's own
+        code, model weights or derived artifacts.</li>
+      <li id="third-party"></li>
+    </ul>
+  </section>
+</main>
+
+<footer class="wrap footer small muted">
+  <p id="version-line"></p>
+  <p id="footer-precision"></p>
+</footer>
+
+<script src="app.js" type="module"></script>
+</body>
+</html>
