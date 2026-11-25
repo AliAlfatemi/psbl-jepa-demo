@@ -1,7 +1,7 @@
 {
  "release_mode": "public-static",
- "demo_version": "bc952d9",
- "built_utc": "2026-11-25 00:00 UTC",
+ "demo_version": "53009af",
+ "built_utc": "2026-11-25 00:44 UTC",
  "models": {
   "vicreg": {
    "checkpoint": "full_vicreg_s0/ConvEncoder_29.pth",
@@ -36,8 +36,8 @@
    "sha256": "f43a646a54fa175d41581cc04102ed062831b8492a2b5effaa0f7e90db0c5026"
   },
   "app.js": {
-   "bytes": 41358,
-   "sha256": "cbd5e072b6b28cf32f6079833e59de283139dc9be159303dd21c5a141652b2e6"
+   "bytes": 41789,
+   "sha256": "47070580ad6fbc63b0e59cef49308cdb3798f6722f8b90bda1736088a5aa8244"
   },
   "assets/clips/SELECTION_MANIFEST.json": {
    "bytes": 4239,
@@ -261,19 +261,19 @@
   },
   "config.js": {
    "bytes": 96,
-   "sha256": "7465b97d2103ec093c49f526c11b9df085ec581ea0ba79de0a1351a2bb346377"
+   "sha256": "6fc661fe3c0a238de6b4c6d4032e7f21311664bd8d4718c284cb21e38dc669fa"
   },
   "favicon.svg": {
    "bytes": 287,
    "sha256": "0a8859377c98334844e7c1952bebe9f72984cbd11ecdda5cf31849d0cd9c9062"
   },
   "index.html": {
-   "bytes": 10820,
-   "sha256": "7901076f922f1b4d92e3da99e31b4ea4dddd5b6dbc9a339b6d5a6e6394d2d330"
+   "bytes": 10859,
+   "sha256": "bde06b5ab1982953070a12b6bd7025ea24949dec2e2fff2c1e00bcf49a3b2be6"
   },
   "style.css": {
-   "bytes": 11877,
-   "sha256": "03cbfde1c507946ca71dac7f87fa6a33e427612b9a7e09ac7f24510788565482"
+   "bytes": 12077,
+   "sha256": "2447317a42f0ca6cfda1ea13e92ff0ce7786e5c196252e3417f6f32c19848a88"
   }
  }
 }

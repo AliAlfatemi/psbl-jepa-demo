@@ -171,3 +171,5 @@ a { color: var(--link); }
 #attribution li { margin-bottom: 6px; }
 @media (max-width: 640px) { .det { display: none; } th, td { padding: 6px 8px; } }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; scroll-behavior: auto !important; } }
+.private-banner { margin: -56px 0 32px; padding: 10px 16px; text-align: center; font-weight: 700; letter-spacing: .04em; background: #7a1212; color: #fff; }
+.private-banner[hidden] { display: none; }

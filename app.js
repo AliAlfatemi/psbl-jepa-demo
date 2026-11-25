@@ -23,7 +23,7 @@ const state = {
   clips: null, manifestSel: null, clipIdx: 0, channel: 0, model: "both", colorBy: "alpha", reveal: false, knn: false,
   revealed: new Set(), cache: new Map(), raw: new Map(), frames: null, probe: {}, map: {}, results: null, pre: null,
   models: Object.fromEntries(MODELS.map((m) => [m, { status: "idle", session: null, error: null, knn: "idle" }])),
-  gen: 0, running: false, fallback: false, live: {}, hover: null, ortReady: null, worker: null, wq: new Map(), wid: 0,
+  runGeneration: 0, running: false, fallback: false, live: {}, hover: null, ortReady: null, worker: null, wq: new Map(), wid: 0,
 };
 
 const isDark = () => document.documentElement.dataset.theme === "dark" ||
@@ -169,7 +169,7 @@ function buildClipGrid() {
     g.appendChild(b);
   });
 }
-function invalidate() { state.gen++; state.live = {}; }
+function invalidate() { state.runGeneration += 1; state.live = {}; }
 async function selectClip(i) {
   if (state.running) return;
   state.clipIdx = i; invalidate();
@@ -234,11 +234,13 @@ function setBusy(b) {
   $$(".clip, .seg-btn[data-model], #channel-select, #knn-toggle, #reveal").forEach((el) => { el.disabled = b; });
 }
 async function run(only) {
-  const gen = ++state.gen, idx = state.clipIdx, wantKnn = state.knn;
+  state.runGeneration += 1;
+  const generation = state.runGeneration, clipIdx = state.clipIdx, idx = clipIdx, wantKnn = state.knn;
   const models = only ? [only] : state.model === "both" ? MODELS : [state.model];
   if (!only) state.live = {};
   setBusy(true); renderResults();
-  const alive = () => gen === state.gen && idx === state.clipIdx;
+  // Before committing any result: drop it if a newer run, a cancel, or a clip/model change happened meanwhile.
+  const alive = () => generation === state.runGeneration && clipIdx === state.clipIdx;
   try {
     const c = state.clips[idx];
     if (!FULL || state.fallback) {
@@ -286,12 +288,12 @@ async function run(only) {
       setStatus(errs.length ? `Finished with ${errs.length} error${errs.length > 1 ? "s" : ""}; see the card${errs.length > 1 ? "s" : ""} below.` : "Done. Every number above was computed on this device.");
     }
   } finally {
-    if (gen === state.gen) setBusy(false);
+    if (generation === state.runGeneration) setBusy(false);
   }
 }
 function cancel() {
   if (!state.running) return;
-  state.gen++; setBusy(false); setStatus("Cancelled. Results that arrive late are discarded.");
+  state.runGeneration += 1; setBusy(false); setStatus("Cancelled. Results that arrive late are discarded.");
 }
 
 /* ---------------------------------------------------------------- result cards */
@@ -517,11 +519,14 @@ function modeText() {
   $("#live-lede").textContent = FULL
     ? "Each clip is four context frames (11 physical channels, 224×224) from a validation trajectory. The encoder maps it to a 128-number embedding; a single linear layer and, optionally, a k-nearest-neighbour lookup over the training set turn that embedding into α and ζ, using the same frozen-evaluation protocol as the paper, with the epoch-30 seed-0 checkpoint shown for interactive illustration."
     : "Each clip is four context frames (11 physical channels, 224×224) from a validation trajectory. Predictions were precomputed offline from the epoch-30 seed-0 checkpoint with the same frozen-evaluation protocol as the paper; this public version ships no model weights or training data.";
+  if (FULL) {
+    const b = $("#private-banner"); b.hidden = false; b.textContent = "PRIVATE COURSE DEMO — DO NOT REDISTRIBUTE";
+  }
   if (!FULL) {
     const n = $("#mode-notice"); n.hidden = false;
     n.textContent = "Public static version: results for the 12 clips are precomputed. The interactive in-browser model is not publicly released while the project is under course evaluation.";
-    $("#badge").textContent = "Precomputed: validation clips · epoch 30 · seed 0";
-    $("#run-btn").textContent = "Show result";
+    $("#badge").textContent = "Precomputed validation illustration · epoch 30 · seed 0";
+    $("#run-btn").textContent = "Reveal precomputed result";
     $("#knn-toggle").closest("label").hidden = true;
     $("#pill-runtime").textContent = "precomputed results";
   }
@@ -583,10 +588,10 @@ window.__demoState = state; // read-only hook used by tests/browser_test.mjs
   if (FULL && !wasmSupported()) {
     state.fallback = true;
     $("#pill-runtime").textContent = "WebAssembly unavailable · precomputed fallback";
-    $("#run-btn").textContent = "Show result";
+    $("#run-btn").textContent = "Reveal precomputed result";
     setStatus("This browser cannot run WebAssembly, so results for the 12 clips are shown from offline precomputation.");
   } else {
-    setStatus(FULL ? "Ready. The encoder (≈ 8 MB) downloads when you press Run." : "Ready. Pick a clip and press Show result.");
+    setStatus(FULL ? "Ready. The encoder (≈ 8 MB) downloads when you press Run." : "Ready. Pick a clip and press Reveal precomputed result.");
     if (FULL) $("#pill-runtime").textContent = `WebAssembly${self.crossOriginIsolated ? " · multi-threaded" : " · single-threaded"}`;
   }
 })();

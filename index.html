@@ -14,6 +14,7 @@
 <body>
 <a class="skip" href="#main">Skip to content</a>
 <header class="hero">
+  <p class="private-banner" id="private-banner" hidden></p>
   <div class="wrap">
     <p class="eyebrow">Deep Learning · NYU · Fall 2026</p>
     <h1>When Non-Collapse Is Not Enough</h1>
@@ -36,7 +37,7 @@
   <section id="live" aria-labelledby="live-title">
     <h2 id="live-title">1 · Run the encoder</h2>
     <p class="section-lede" id="live-lede"></p>
-    <p class="badge" id="badge">Live demo: validation clips · epoch 30 · seed 0</p>
+    <p class="badge" id="badge">Private live demo: validation clips · epoch 30 · seed 0</p>
 
     <div class="live-grid">
       <div class="panel">
@@ -72,7 +73,7 @@
     </div>
 
     <p class="small muted units-note">Live values and absolute errors are shown in raw physical-parameter units. The
-      paper's reported metric is MSE on training-z-scored labels. Twelve clips cannot estimate aggregate
+      paper reports MSE on training-z-scored labels. Twelve clips cannot estimate aggregate
       performance; see section 3 for that.</p>
     <div class="results-grid" id="results" aria-live="polite"></div>
 
@@ -121,8 +122,8 @@
     <p class="section-lede">Frozen-encoder MSE on training-z-scored (α, ζ), mean ± std over 3 seeds; lower is better.
       Predicting the training mean scores <span id="pm"></span> on validation. The test split was evaluated once, on the
       epoch-30 checkpoints.</p>
-    <p class="note">The live examples above are validation illustrations from one checkpoint. The table summarizes
-      offline three-seed results and is not computed from the 12 displayed clips.</p>
+    <p class="note">These examples use one checkpoint for illustration. The paper tables report offline three-seed
+      aggregates and are not calculated from the displayed clips.</p>
     <div class="table-wrap" tabindex="0" role="region" aria-label="Results table"><table id="res-table"><caption class="sr-only">Frozen-encoder MSE by split, epoch and encoder</caption></table></div>
     <div class="callouts">
       <div class="callout"><h3>Held-out test</h3><p id="ci-text"></p></div>
